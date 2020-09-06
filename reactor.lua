@@ -1,0 +1,51 @@
+-- libraries supporting component interaction
+local component = require("component")
+local sides = require("sides")
+
+-- serialization for transmitting tables across network
+local serialization = require("serialization")
+local math = require("math")
+
+-- idiotball API
+local system = requires("system")
+local system = requries("battery")
+
+---------- class representing a fluid reactor --------
+Reactor = {
+  component = nil,
+  -- this class is designed to interact with an EU storage device
+  -- EU storage is essential to regulate load and must be provided as an EU sink for a fluid reactor
+  -- failure to integrate a battery will result in reactor instability
+  battery = nil,
+  interval = 1
+}
+
+function Reactor:new (o, i_component, i_battery, i_redstone, i_threshold)
+  o = o or {}
+  setmetatable(o, self)
+  self.__index = self
+  self.component = i_component
+  self.battery = i_battery
+  print("self.battery: ", self.battery)
+  self.redstone = i_redstone
+  self.heat_threshold = i_threshold
+  self.max_heat = self.component.getMaxHeat()
+  return o
+end
+
+function Reactor:toggle ()
+  self.battery:updateToCharge()
+  percent_heat = self.component.getHeat()/self.max_heat
+  if self.battery.charge == true and percent_heat <= self.heat_threshold then
+  --if self.battery.charge == true then
+    -- redstone on = reactor off
+    self.redstone.setOutput(sides.south, 0)
+  else
+    self.redstone.setOutput(sides.south, 14)
+  end
+end
+
+local cleanup_thread = thread.create(function()
+  event.pull("interrupted")
+  print("Entering cleanup thread")
+end)
