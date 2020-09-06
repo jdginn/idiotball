@@ -1,0 +1,2 @@
+# idiotball
+Idiotball server functionality
