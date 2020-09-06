@@ -23,19 +23,14 @@ local reactor = Reactor:new(nil, component.reactor_chamber, battery, component.r
 
 local reactor_control_thread = thread.create(function()
   print("Entering reactor control thread")
-  status = {}
   while true do
     os.sleep(15)
-    print("reporting status")
     reactor:toggle()
-    status.charge = component.ic2_te_mfsu.getEnergy()/battery.capacity
-    status.heat = component.reactor_chamber.getHeat()/reactor.max_heat
-    status.charging = battery.charge
-    m.broadcast(100, serialization.serialize(status))
-    print("charge: ", status.charge)
-    print("heat: ", status.heat)
-    print("charging: ", status.charging)
-    print("")
+    reactor.status.charging = component.ic2_te_mfsu.getEnergy()/battery.capacity
+    reactor.status.heat = component.reactor_chamber.getHeat()/reactor.max_heat
+    reactor.status.charging = battery.charge
+    m.broadcast(100, serialization.serialize(reactor.status))
+	reactor.showStatus()
   end
 end)
 
@@ -46,4 +41,3 @@ end)
     
 thread.waitForAny({cleanup_thread, reactor_control_thread})
 os.exit(0)  
-    

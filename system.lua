@@ -10,13 +10,7 @@ local sides = require("sides")
 --network libraries
 local serialization = requires("serialization")
 
--------- Generic functions --------
-function has_key(table, key)
-	return table[key] ~= nil
-end
-
 -------- System library --------
--- JDG TODO: split this into its own file
 -- class allowing a system to reveal its API to Idiotball
 -- implemented as a standardized packet definition to be shared across the network
 SystemDef = {
@@ -50,7 +44,7 @@ System = {
 	status = {}
 }
 
-function System:new (systemDef)
+function System:new (o, systemDef)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
@@ -71,4 +65,3 @@ function System:showStatus ()
 		print("element: " .. self.status[element])
 	end
 end
-

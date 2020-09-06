@@ -1,17 +1,14 @@
 -- libraries supporting component interaction
 local component = require("component")
 local sides = require("sides")
-
--- serialization for transmitting tables across network
-local serialization = require("serialization")
 local math = require("math")
 
 -- idiotball API
 local system = requires("system")
 local system = requries("battery")
 
----------- class representing a fluid reactor --------
-Reactor = {
+---------- class representing a fluid reactor system --------
+Reactor = System:new() {
   component = nil,
   -- this class is designed to interact with an EU storage device
   -- EU storage is essential to regulate load and must be provided as an EU sink for a fluid reactor
@@ -21,22 +18,30 @@ Reactor = {
 }
 
 function Reactor:new (o, i_component, i_battery, i_redstone, i_threshold)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  self.component = i_component
-  self.battery = i_battery
-  print("self.battery: ", self.battery)
-  self.redstone = i_redstone
-  self.heat_threshold = i_threshold
-  self.max_heat = self.component.getMaxHeat()
-  return o
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+	
+	self.systemName = "reactor"
+	self.status = {
+		charge = 0,
+		heat = 0,
+		charging = true
+	}
+
+    self.component = i_component
+    self.battery = i_battery
+    print("self.battery: ", self.battery)
+    self.redstone = i_redstone
+    self.heat_threshold = i_threshold
+    self.max_heat = self.component.getMaxHeat()
+    return o
 end
 
 function Reactor:toggle ()
   self.battery:updateToCharge()
   percent_heat = self.component.getHeat()/self.max_heat
-  if self.battery.charge == true and percent_heat <= self.heat_threshold then
+  if self.battery.charging == true and percent_heat <= self.heat_threshold then
   --if self.battery.charge == true then
     -- redstone on = reactor off
     self.redstone.setOutput(sides.south, 0)

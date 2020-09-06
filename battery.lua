@@ -7,16 +7,13 @@ local math = require("math")
 local component = require("component")
 local sides = require("sides")
 
--- serialization for transmitting tables across network
-local serialization = require("serialization")
-
 -- idiotball API
 local system = requires("system")
 
 -------- class representing a EU storage device --------
 Battery = {
   component = nil,
-  charge = true
+  charging = true
 }
 
 function Battery:new (o, i_component)
@@ -25,7 +22,7 @@ function Battery:new (o, i_component)
   self.__index = self
   self.component = i_component
   self.capacity = self.component.getCapacity()
-  self.charge = true
+  self.charging = true
   return o
 end
 
@@ -35,8 +32,8 @@ function Battery:updateToCharge ()
   -- we want to void rapid toggling so we ipmlement hysteresis in this function and only switch
   -- for charges below 85% or above 95%
   if percent <= 0.85 then
-    self.charge = true
+    self.charging = true
   elseif percent >= 0.95 then
-    self.charge = false
+    self.charging = false
   end
 end
