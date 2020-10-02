@@ -4,11 +4,12 @@ local sides = require("sides")
 local math = require("math")
 
 -- idiotball API
-local system = requires("system")
-local system = requries("battery")
+local systemtools = require("systemtools")
+local Battery = require("Battery")
 
+local Reactor = {}
 ---------- class representing a fluid reactor system --------
-Reactor = System:new() {
+Reactor = {
   component = nil,
   -- this class is designed to interact with an EU storage device
   -- EU storage is essential to regulate load and must be provided as an EU sink for a fluid reactor
@@ -16,6 +17,9 @@ Reactor = System:new() {
   battery = nil,
   interval = 1
 }
+
+-- inherit from System class
+setmetatable(Reactor, systemtools.System)
 
 function Reactor:new (o, i_component, i_battery, i_redstone, i_threshold)
     o = o or {}
@@ -50,7 +54,4 @@ function Reactor:toggle ()
   end
 end
 
-local cleanup_thread = thread.create(function()
-  event.pull("interrupted")
-  print("Entering cleanup thread")
-end)
+return Reactor

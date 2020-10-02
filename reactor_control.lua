@@ -11,9 +11,9 @@ local sides = require("sides")
 local serialization = require("serialization")
 
 -- idiotball API
-local system = requires("system")
-local system = requries("battery")
-local system = requires("reactor")
+local system = require("systemtools")
+local system = require("Battery")
+local system = require("Reactor")
 
 -- broadcast reactor status to connectd devices
 m = component.modem
