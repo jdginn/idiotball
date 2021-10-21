@@ -1,2 +1,2 @@
 # idiotball
-Idiotball server functionality
+Astoundingly nerdy Minecraft OpenComputers project
